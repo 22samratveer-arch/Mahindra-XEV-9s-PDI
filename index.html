@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahindra XEV 9s PDI Companion</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-copper: #d97706;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-gray: #64748b;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-copper);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            color: var(--accent-copper);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .progress-card {
+            position: sticky;
+            top: 65px;
+            z-index: 90;
+            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .progress-bar-bg {
+            background: var(--bg-primary);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar-fill {
+            background: var(--accent-green);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .filter-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .btn-filter {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-filter.active {
+            background: var(--accent-copper);
+            color: white;
+            border-color: var(--accent-copper);
+        }
+
+        .category-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-copper);
+            margin: 1.5rem 0 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .item-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.9rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .item-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .item-title {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .item-tip {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .status-btns {
+            display: flex;
+            gap: 0.3rem;
+            shrink: 0;
+        }
+
+        .btn-status {
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            padding: 0.4rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-status.ok.selected {
+            background: var(--accent-green);
+            color: white;
+            border-color: var(--accent-green);
+        }
+
+        .btn-status.not-ok.selected {
+            background: var(--accent-red);
+            color: white;
+            border-color: var(--accent-red);
+        }
+
+        .btn-status.na.selected {
+            background: var(--accent-gray);
+            color: white;
+            border-color: var(--accent-gray);
+        }
+
+        .remarks-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .floating-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .btn-action {
+            background: var(--accent-copper);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        @media print {
+            header, .floating-actions, .filter-toolbar, .status-btns, .progress-card {
+                display: none !important;
+            }
+            body {
+                background: white;
+                color: black;
+                padding-bottom: 0;
+            }
+            .card, .item-card {
+                background: white;
+                color: black;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .category-header { color: #333; }
+            .remarks-input { border: 1px solid #aaa; color: black; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">⚡ Mahindra XEV 9s PDI Companion</div>
+            <button class="btn-action btn-secondary" onclick="resetChecklist()">Reset All</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Vehicle Metadata Form -->
+        <div class="card">
+            <h2>Vehicle & Delivery Details</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>VIN / Chassis Number</label>
+                    <input type="text" id="vin" placeholder="Enter 17-digit VIN" onchange="saveMetadata()">
+                </div>
+                <div class="form-group">
+                    <label>Variant & Pack</label>
+                    <select id="variant" onchange="saveMetadata()">
+                        <option value="Pack THREE">Pack THREE (79 kWh)</option>
+                        <option value="Pack THREE Above">Pack THREE Above (79 kWh)</option>
+                        <option value="Pack TWO">Pack TWO (70 kWh)</option>
+                        <option value="Pack ONE">Pack ONE (59 kWh)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ext. Color & Roof</label>
+                    <input type="text" id="color" placeholder="e.g. Nebula Blue Dual Tone" onchange="saveMetadata()">
+                </div>
+                <div class="form-group">
+                    <label>Odometer Reading (km)</label>
+                    <input type="number" id="odo" placeholder="e.g. 15" onchange="saveMetadata()">
+                </div>
+                <div class="form-group">
+                    <label>Mfg Month & Year</label>
+                    <input type="text" id="mfgDate" placeholder="e.g. Aug 2026" onchange="saveMetadata()">
+                </div>
+                <div class="form-group">
+                    <label>Inspector Name</label>
+                    <input type="text" id="inspector" placeholder="Your Name" onchange="saveMetadata()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Progress Card -->
+        <div class="card progress-card">
+            <div class="stats-grid">
+                <span>Progress: <strong id="progPercent">0%</strong></span>
+                <span>OK: <strong id="statOk" style="color:var(--accent-green)">0</strong> | Not OK: <strong id="statNotOk" style="color:var(--accent-red)">0</strong> | Left: <strong id="statLeft">0</strong></span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-toolbar">
+            <button class="btn-filter active" onclick="filterItems('all', this)">All Items</button>
+            <button class="btn-filter" onclick="filterItems('issues', this)">⚠️ Issues Only (Not OK)</button>
+            <button class="btn-filter" onclick="filterItems('unchecked', this)">Unchecked</button>
+        </div>
+
+        <!-- Dynamic Checklist Container -->
+        <div id="checklistContainer"></div>
+    </div>
+
+    <!-- Floating Actions -->
+    <div class="floating-actions">
+        <button class="btn-action btn-secondary" onclick="window.print()">🖨️ Print / Save PDF</button>
+        <button class="btn-action" onclick="exportData()">💾 Export Backup JSON</button>
+    </div>
+
+    <script>
+        const pdiData = [
+            {
+                category: "0. Documentation & Vehicle Identification",
+                items: [
+                    { id: "doc_1", text: "VIN / Chassis Number Match", tip: "Verify match across Windshield, B-pillar sticker, Frunk metal plate, Tax Invoice, Insurance & RC." },
+                    { id: "doc_2", text: "Motor Number Verification", tip: "Cross-check electric drive unit motor serial number against billing invoice." },
+                    { id: "doc_3", text: "Variant & Trim Accuracy", tip: "Confirm 'Pack THREE' vs 'Pack THREE Above' (price difference ~2L, distinct ADAS/HUD features)." },
+                    { id: "doc_4", text: "Battery Pack Specs Match", tip: "Confirm 79 kWh / 70 kWh / 59 kWh battery capacity specified on paperwork matches ordered variant." },
+                    { id: "doc_5", text: "Seating Layout Confirmation", tip: "Verify ordered seating layout (6-seater captain seats vs 7-seater bench layout)." },
+                    { id: "doc_6", text: "Manufacturing Date Code", tip: "Windshield/tyre date code should be within 2-3 months of delivery to avoid yard storage degradation." },
+                    { id: "doc_7", text: "Insurance Details Accuracy", tip: "Check IDV, Chassis #, Motor #, Owner name, and add-on covers (Zero Dep, Battery Protect)." },
+                    { id: "doc_8", text: "Keys & Smart Cards Present", tip: "Verify 2 Smart Key fobs and NFC Key Card (if equipped) both function." },
+                    { id: "doc_9", text: "Manuals & Warranty Certificates", tip: "Ensure Owner Manual, Service Booklet, Vehicle Warranty & Lifetime Battery Warranty certificate are provided." },
+                    { id: "doc_10", text: "Charging Hardware Handover", tip: "Check portable 3.3kW Type 2 cable and verify home 7.2kW / 11kW wallbox charger booking/delivery." }
+                ]
+            },
+            {
+                category: "1. Exterior Body, Paint & Panels",
+                items: [
+                    { id: "ext_1", text: "Panel Gap Uniformity", tip: "Inspect gaps along bonnet, front/rear bumpers, doors, tailgate, charge flap, and roof rails." },
+                    { id: "ext_2", text: "Paint Inspection & Color Uniformity", tip: "Check in daylight at an angle for waviness, overspray, scratches, dents, or bumper-to-body color mismatch." },
+                    { id: "ext_3", text: "Paint Thickness Gauge Check", tip: "Factory paint is ~90-160 µm. Significantly higher readings indicate repaint after transit damage." },
+                    { id: "ext_4", text: "Front & Rear Illuminated Logos", tip: "Verify front Mahindra twin-peaks illuminated logo and rear signature lighting illuminate evenly." },
+                    { id: "ext_5", text: "Roof Rails & Rear Spoiler", tip: "Check roof rails are securely mounted with no play; rear spoiler is tightly fitted with no cracks." },
+                    { id: "ext_6", text: "Underbody Skid Plate & Frame", tip: "Inspect underbody battery shield/skid plate for transit chain scrapes, dents, or corrosion." },
+                    { id: "ext_7", text: "Frunk (Front Trunk) Inspection", tip: "Open frunk lid, inspect latching, rubber weather seals, drain plugs, and check for water ingress." }
+                ]
+            },
+            {
+                category: "2. Glass, Mirrors & Exterior Lights",
+                items: [
+                    { id: "gl_1", text: "Glass & Windshield Condition", tip: "Inspect windshield, rear glass, and side windows for chips, scratches, or manufacturing cracks." },
+                    { id: "gl_2", text: "Glass Year Code Matching", tip: "Check etched year codes on all glass corners match vehicle manufacturing build year." },
+                    { id: "gl_3", text: "Full-Width Connected LED DRL Strip", tip: "Confirm continuous light bar across front bonnet line lights up uniformly without dead segments." },
+                    { id: "gl_4", text: "Bi-LED Projector Headlamps & Fog Lights", tip: "Test low beam, high beam, auto booster lamps, follow-me-home function, and cornering lamps." },
+                    { id: "gl_5", text: "Sequential Turn Indicators", tip: "Verify dynamic 'chase' animation operates smoothly on front and rear indicators." },
+                    { id: "gl_6", text: "ORVM Functions", tip: "Test electric folding, power adjustment, integrated LED indicators, heating/defogging, and auto-dip in reverse." },
+                    { id: "gl_7", text: "Wipers & Washers (Front & Rear)", tip: "Check wiper blades, fluid spray pattern, auto-rain sensing wipers, and auto windshield defogging." }
+                ]
+            },
+            {
+                category: "3. Tyres, Wheels & Charging Hardware",
+                items: [
+                    { id: "tw_1", text: "Tyre Brand, Size & DOT Date Code", tip: "All 4 tyres must be identical brand/size and manufactured within a few weeks of build date." },
+                    { id: "tw_2", text: "Tyre Pressure & Flat-Spotting", tip: "Verify PSI matches door jamb sticker. Check tread depth and inspect for yard storage flat spots." },
+                    { id: "tw_3", text: "Alloy Wheels Condition", tip: "Inspect 18-inch/19-inch alloys for kerb rash, transit scratches, or wheel nut tool rounding." },
+                    { id: "tw_4", text: "Spare Wheel / Puncture Repair Kit", tip: "Check spare wheel or puncture repair compressor kit, warning triangle, jack, and toolkit." },
+                    { id: "tw_5", text: "Charge Flap & Lock Release", tip: "Test electric charge flap release from cabin button and key fob; verify smooth latching." },
+                    { id: "tw_6", text: "CCS2 Charging Port Inspection", tip: "Inspect pins for corrosion/bent contacts, dust caps present, and locking pin functionality." }
+                ]
+            },
+            {
+                category: "4. Doors, Locks & Keyless Entry",
+                items: [
+                    { id: "dl_1", text: "Flush Electric Door Handles", tip: "Test handle deployment on approach with key fob and mechanical emergency key unlock override." },
+                    { id: "dl_2", text: "Passive Keyless Entry & NFC Card", tip: "Test proximity auto-unlock/lock and NFC key card tap functionality on driver B-pillar/door." },
+                    { id: "dl_3", text: "Welcome & Walk-away Lighting", tip: "Confirm welcome lighting animations on screens and exterior lighting trigger upon approach." },
+                    { id: "dl_4", text: "Door Seals & Closing Sound", tip: "Check continuous rubber weather gaskets, check-strap 3-4 stop points, and solid door closure 'thud'." },
+                    { id: "dl_5", text: "Powered Tailgate & Hands-Free Sensor", tip: "Test power boot open/close via cabin button, key fob, tailgate switch, kick sensor, and emergency manual release." }
+                ]
+            },
+            {
+                category: "5. Interior - Front Row & Dashboard",
+                items: [
+                    { id: "in_1", text: "Upholstery & Dashboard Finish", tip: "Check leatherette/fabric seats and soft-touch dashboard panels for stains, tears, loose stitching, or rattles." },
+                    { id: "in_2", text: "Driver Seat Adjustments & Memory", tip: "Test 6-way power adjustment, lumbar support, seat memory recall settings, and welcome retreat." },
+                    { id: "in_3", text: "Co-Driver Seat & Powered 'Boss Mode'", tip: "Test co-driver power adjustments and rear-seat 'Boss Mode' controls to move front passenger seat." },
+                    { id: "in_4", text: "Front Seat Ventilation", tip: "Test seat cooling fans on high setting; feel airflow through base and backrest within 30s." },
+                    { id: "in_5", text: "Steering Wheel Controls & Adjustment", tip: "Test tilt/telescopic adjustment, leather wrap finish, horn, audio, cruise control, and ADAS toggles." },
+                    { id: "in_6", text: "Ambient Lighting ('Live Your Mood')", tip: "Cycle through multi-color ambient lighting across dashboard, door trims, and panoramic sunroof border." },
+                    { id: "in_7", text: "Front Wireless Charger & Power Outlets", tip: "Test wireless phone charging pad, 12V socket, and 15W/65W Type-C USB fast charging ports." },
+                    { id: "in_8", text: "Auto-Dimming IRVM & Sun Visors", tip: "Verify auto-dimming rear-view mirror sensor and sun visor vanity mirror lights." }
+                ]
+            },
+            {
+                category: "6. Interior - Second & Third Rows",
+                items: [
+                    { id: "ir_1", text: "2nd Row Sliding, Recline & 60:40 Split", tip: "Test seat sliding rails, recline angles, and fold-flat mechanisms for smooth operation." },
+                    { id: "ir_2", text: "2nd Row Ventilated Seats & Wireless Charger", tip: "Test rear seat ventilation cooling and rear armrest wireless charger (Pack THREE features)." },
+                    { id: "ir_3", text: "Rear Climate Control Vents & Console", tip: "Check airflow from B-pillar/center console AC vents, rear temperature controls, and door sunshades." },
+                    { id: "ir_4", text: "Center Armrest, Lounge Desk & Cooling Box", tip: "Inspect rear fold-down armrest cupholders, lounge desk mechanism, and center console cooling box." },
+                    { id: "ir_5", text: "ISOFIX Anchors & Seatbelts", tip: "Inspect ISOFIX covers/mounts and confirm all seatbelts latch firmly and retract smoothly." },
+                    { id: "ir_6", text: "3rd Row Access & Fold-Flat Mechanism", tip: "Test 2nd-row tumble/slide for 3rd-row entry and confirm 3rd-row seats fold completely flat into trunk floor." },
+                    { id: "ir_7", text: "3rd Row Vents, USB Ports & Space", tip: "Check 3rd-row AC blower controls, air vents, USB charging ports, and headrest height adjustments." }
+                ]
+            },
+            {
+                category: "7. Infotainment, Displays & Connectivity",
+                items: [
+                    { id: "inf_1", text: "Triple 12.3-inch Screen Display Setup", tip: "Inspect Driver Display, Center Touchscreen, and Passenger Screen for dead pixels, lag, or backlighting bleed." },
+                    { id: "inf_2", text: "Wireless Apple CarPlay & Android Auto", tip: "Pair a smartphone via Bluetooth/Wi-Fi and test connection stability, navigation, and audio." },
+                    { id: "inf_3", text: "16-Speaker Harman Kardon Sound System", tip: "Test Dolby Atmos audio balance, fader, subwoofer output, and listen for door panel distortion." },
+                    { id: "inf_4", text: "In-Car AI Apps (Alexa, ChatGPT, etc.)", tip: "Verify system response for voice commands, built-in navigation, and native app loading." },
+                    { id: "inf_5", text: "Passenger Screen Lockout Safety", tip: "Confirm front passenger screen content auto-blocks driver visibility while vehicle is in Drive mode." },
+                    { id: "inf_6", text: "360-Degree Camera & Blind View Monitor", tip: "Verify camera stitching accuracy, dynamic gridlines, 3D views, and blind-spot feed on turn signals." },
+                    { id: "inf_7", text: "Secure 360 Drive Recording", tip: "Confirm dashcam/surround video recording function is accessible via touchscreen/app." },
+                    { id: "inf_8", text: "BYOD Mount Proportions & Software Version", tip: "Check Bring-Your-Own-Device seatback mounts and record installed software/OTA firmware version." }
+                ]
+            },
+            {
+                category: "8. EV Systems, Battery & Regeneration",
+                items: [
+                    { id: "ev_1", text: "Battery Pack State of Charge (SoC %)", tip: "Delivery SoC should ideally be 40%–80% (avoid long yard storage at 0% or 100%)." },
+                    { id: "ev_2", text: "12V Auxiliary Battery Health", tip: "Check 12V battery voltage readout and ensure no low 12V auxiliary battery warning icons." },
+                    { id: "ev_3", text: "Live AC Charging Test", tip: "Plug in AC charger at stockyard; verify charging indicator, latch lock, and displayed kW charge rate." },
+                    { id: "ev_4", text: "Regenerative Braking Modes (L1, L2, L3)", tip: "Test regen level toggles via paddle shifters and test One-Pedal Drive deceleration response." },
+                    { id: "ev_5", text: "Drive Modes (Default, Range, Race, Custom)", tip: "Cycle through drive modes; verify dashboard theme changes and throttle response variation." },
+                    { id: "ev_6", text: "Electric Motor Noise Inspection", tip: "Drive at low creep speed; electric powertrain should be near-silent with no harsh grinding or high whining." },
+                    { id: "ev_7", text: "OBD2 Diagnostic & Active DTC Fault Codes", tip: "Ask dealer to pull up diagnostic screen or scan OBD2 for battery SoH, SoC, and active fault codes." }
+                ]
+            },
+            {
+                category: "9. Safety Systems, ADAS & Mechanicals",
+                items: [
+                    { id: "sf_1", text: "Airbags System Self-Test", tip: "Verify 7-airbag warning indicator self-tests on ignition startup and turns off completely." },
+                    { id: "sf_2", text: "Level 2 ADAS Radar & Camera Calibration", tip: "Check ADAS diagnostic menu; confirm radar/camera status displays 'OK' (no 'Blocked' or 'Fault')." },
+                    { id: "sf_3", text: "ADAS Functions Test", tip: "Test Lane Keep Assist, Adaptive Cruise Control, Forward Collision Warning, and Blind Spot Monitoring." },
+                    { id: "sf_4", text: "Electronic Parking Brake & Auto-Hold", tip: "Verify EPB engagement/disengagement and test Auto-Hold brake holding on a incline slope." },
+                    { id: "sf_5", text: "Air Purifier Module", tip: "Locate cabin air purifier module; verify activation and air quality index (AQI) readout on screen." },
+                    { id: "sf_6", text: "Panoramic Sunroof & Anti-Pinch Safety", tip: "Test full open/close/tilt, blind curtain operation, wind noise seals, and anti-pinch obstruction safety." },
+                    { id: "sf_7", text: "Brake Discs, Coolant & Fluid Leaks", tip: "Inspect brake rotors for surface rust/scoring; check battery thermal management coolant and brake fluid levels." }
+                ]
+            },
+            {
+                category: "10. Test Drive & Final Acceptance",
+                items: [
+                    { id: "td_1", text: "Straight-Line Tracking & Steering Alignment", tip: "Drive on straight road; vehicle should not pull to left/right and steering wheel must sit centered." },
+                    { id: "td_2", text: "Braking & Suspension Feel", tip: "Test smooth braking without pedal shuddering; check suspension over bumps for clunks or squeaks." },
+                    { id: "td_3", text: "Odometer Verification", tip: "Note final odometer reading (should ideally be under 50 km)." },
+                    { id: "td_4", text: "360-Degree Timestamped Photos & Video", tip: "Take high-res photos/video of all 4 exterior angles, roof, interior, odometer, and frunk before signing." },
+                    { id: "td_5", text: "Final Sign-off Clearance", tip: "Do NOT sign the delivery acceptance form until all 'Not OK' defects are resolved or formally documented." }
+                ]
+            }
+        ];
+
+        let state = {
+            metadata: {},
+            responses: {},
+            remarks: {}
+        };
+
+        function init() {
+            loadSavedState();
+            renderChecklist();
+            updateStats();
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById("checklistContainer");
+            container.innerHTML = "";
+
+            pdiData.forEach(cat => {
+                const catHeader = document.createElement("div");
+                catHeader.className = "category-header";
+                catHeader.innerHTML = cat.category;
+                container.appendChild(catHeader);
+
+                cat.items.forEach(item => {
+                    const status = state.responses[item.id] || "";
+                    const remark = state.remarks[item.id] || "";
+
+                    const card = document.createElement("div");
+                    card.className = "item-card";
+                    card.id = `card_${item.id}`;
+                    card.setAttribute("data-status", status || "unchecked");
+
+                    card.innerHTML = `
+                        <div class="item-main">
+                            <div>
+                                <div class="item-title">${item.text}</div>
+                                <div class="item-tip">${item.tip}</div>
+                            </div>
+                            <div class="status-btns">
+                                <button class="btn-status ok ${status === 'OK' ? 'selected' : ''}" onclick="setStatus('${item.id}', 'OK')">OK</button>
+                                <button class="btn-status not-ok ${status === 'NOT_OK' ? 'selected' : ''}" onclick="setStatus('${item.id}', 'NOT_OK')">NOT OK</button>
+                                <button class="btn-status na ${status === 'NA' ? 'selected' : ''}" onclick="setStatus('${item.id}', 'NA')">N/A</button>
+                            </div>
+                        </div>
+                        <input type="text" class="remarks-input" placeholder="Add defect notes / observations..." value="${remark}" onchange="setRemark('${item.id}', this.value)">
+                    `;
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function setStatus(id, value) {
+            if (state.responses[id] === value) {
+                delete state.responses[id];
+            } else {
+                state.responses[id] = value;
+            }
+            saveState();
+            renderChecklist();
+            updateStats();
+        }
+
+        function setRemark(id, value) {
+            state.remarks[id] = value;
+            saveState();
+        }
+
+        function saveMetadata() {
+            state.metadata = {
+                vin: document.getElementById("vin").value,
+                variant: document.getElementById("variant").value,
+                color: document.getElementById("color").value,
+                odo: document.getElementById("odo").value,
+                mfgDate: document.getElementById("mfgDate").value,
+                inspector: document.getElementById("inspector").value
+            };
+            saveState();
+        }
+
+        function loadSavedState() {
+            const saved = localStorage.getItem("xev9s_pdi_state");
+            if (saved) {
+                state = JSON.parse(saved);
+                if (state.metadata) {
+                    document.getElementById("vin").value = state.metadata.vin || "";
+                    document.getElementById("variant").value = state.metadata.variant || "Pack THREE";
+                    document.getElementById("color").value = state.metadata.color || "";
+                    document.getElementById("odo").value = state.metadata.odo || "";
+                    document.getElementById("mfgDate").value = state.metadata.mfgDate || "";
+                    document.getElementById("inspector").value = state.metadata.inspector || "";
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem("xev9s_pdi_state", JSON.stringify(state));
+        }
+
+        function updateStats() {
+            let total = 0;
+            let ok = 0;
+            let notOk = 0;
+            let checked = 0;
+
+            pdiData.forEach(cat => {
+                cat.items.forEach(item => {
+                    total++;
+                    const res = state.responses[item.id];
+                    if (res) {
+                        checked++;
+                        if (res === "OK") ok++;
+                        if (res === "NOT_OK") notOk++;
+                    }
+                });
+            });
+
+            const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+            document.getElementById("progPercent").innerText = `${percent}%`;
+            document.getElementById("progressBar").style.width = `${percent}%`;
+            document.getElementById("statOk").innerText = ok;
+            document.getElementById("statNotOk").innerText = notOk;
+            document.getElementById("statLeft").innerText = total - checked;
+        }
+
+        function filterItems(type, btn) {
+            document.querySelectorAll(".btn-filter").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            const cards = document.querySelectorAll(".item-card");
+            cards.forEach(card => {
+                const status = card.getAttribute("data-status");
+                if (type === "all") {
+                    card.style.display = "flex";
+                } else if (type === "issues") {
+                    card.style.display = status === "NOT_OK" ? "flex" : "none";
+                } else if (type === "unchecked") {
+                    card.style.display = (status === "" || status === "unchecked") ? "flex" : "none";
+                }
+            });
+        }
+
+        function resetChecklist() {
+            if (confirm("Are you sure you want to reset all checklist entries? This cannot be undone.")) {
+                localStorage.removeItem("xev9s_pdi_state");
+                state = { metadata: {}, responses: {}, remarks: {} };
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const dlAnchor = document.createElement("a");
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `XEV9S_PDI_Report_${state.metadata.vin || 'Draft'}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
